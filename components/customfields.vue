@@ -4,14 +4,14 @@
       <!-- Fields -->
       <div v-for="(field, index) in customFields" :key="index" class="col-12 col-md-6">
         <div class="row">
-          <div :class="`${readonly ? 'col-12' : 'col-11'}`">
+          <div :class="`${(readonly || formMode) ? 'col-12' : 'col-11'}`">
             <InputField :dense="dense" :Label="field.label" Icon="fas fa-pen" :readonly="readonly" clearable
               v-model="this.customFieldsValues[field.name]" :type="typeDictionary[field.type]"
               :Error="field.required ? valuesError[field.name] : false"
               @focus="() => { if (valuesError[field.name]) valuesError[field.name] = false }">
             </InputField>
           </div>
-          <div v-if="!readonly" class="col-1 flex justify-center items-center">
+          <div v-if="!(readonly || formMode)" class="col-1 flex justify-center items-center">
             <q-btn class="q-mx-sm" icon="fas fa-minus" color="negative" label="" dense round outline
               @click="remove(field)">
               <q-tooltip>Remover Campo</q-tooltip>
@@ -21,7 +21,7 @@
       </div>
       <div class="col-6 flex justify-start items-center">
         <!-- Button -->
-        <q-btn v-if="!readonly" class="q-ma-sm" icon="fas fa-plus" color="primary" label="Adicionar Campo"
+        <q-btn v-if="!(readonly || formMode)" class="q-ma-sm" icon="fas fa-plus" color="primary" label="Adicionar Campo"
           :dense="dense" outline @click="showModal = true">
           <q-tooltip>Adiciona um Campo Personalizado</q-tooltip>
         </q-btn>
@@ -69,6 +69,7 @@ export default {
   props: {
     dense: Boolean,
     readonly: Boolean,
+    formMode: Boolean,
     entityName: {
       type: String,
       required: true,
