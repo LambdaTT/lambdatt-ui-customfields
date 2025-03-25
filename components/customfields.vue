@@ -1,53 +1,61 @@
 <template>
   <div>
-    <div class="row">
-      <!-- Fields -->
-      <div v-for="(field, index) in customFields" :key="index" class="col-12 col-md-6">
+    <q-card flat :bordered="showBorder" :class="showBorder? 'q-pa-sm q-ma-sm':''" style="border-radius: 10px;">
+      <div v-if="showTitle" class="text-bold q-pa-sm">Campos Personalizados</div>
         <div class="row">
-          <div :class="`${(readonly || formMode) ? 'col-12' : 'col-11'}`">
-            <InputField :dense="dense" :Label="field.label" Icon="fas fa-pen" :readonly="readonly" clearable
-              v-model="this.customFieldsValues[field.name]" :type="typeDictionary[field.type]"
-              :Error="field.required ? valuesError[field.name] : false"
-              @focus="() => { if (valuesError[field.name]) valuesError[field.name] = false }">
-            </InputField>
+          <!-- Fields -->
+          <div v-for="(field, index) in customFields" :key="index" class="col-12 col-md-6">
+            <div class="row">
+              <div class="col">
+                <InputField :dense="dense" Icon="fas fa-pen" :readonly="readonly" clearable
+                  v-model="this.customFieldsValues[field.name]" :type="typeDictionary[field.type]"
+                  :Label="`${field.label}${field.required === 'Y'? '*':''}`"  
+                  :Error="field.required ? valuesError[field.name] : false"
+                  @focus="() => { if (valuesError[field.name]) valuesError[field.name] = false }">
+                </InputField>
+              </div>
+              <div v-if="!(readonly || formMode)" class="col-auto flex justify-center items-center">
+                <q-btn class="q-mx-sm" icon="fas fa-minus" color="negative" label="" dense round outline
+                  @click="remove(field)">
+                  <q-tooltip>Remover Campo</q-tooltip>
+                </q-btn>
+              </div>
+            </div>
           </div>
-          <div v-if="!(readonly || formMode)" class="col-1 flex justify-center items-center">
-            <q-btn class="q-mx-sm" icon="fas fa-minus" color="negative" label="" dense round outline
-              @click="remove(field)">
-              <q-tooltip>Remover Campo</q-tooltip>
+          <div class="col-6 flex justify-start items-center">
+            <!-- Button -->
+            <q-btn v-if="!(readonly || formMode)" class="q-ma-sm" icon="fas fa-plus" color="primary" label="Adicionar Campo"
+              :dense="dense" outline @click="showModal = true">
+              <q-tooltip>Adiciona um Campo Personalizado</q-tooltip>
             </q-btn>
           </div>
         </div>
-      </div>
-      <div class="col-6 flex justify-start items-center">
-        <!-- Button -->
-        <q-btn v-if="!(readonly || formMode)" class="q-ma-sm" icon="fas fa-plus" color="primary" label="Adicionar Campo"
-          :dense="dense" outline @click="showModal = true">
-          <q-tooltip>Adiciona um Campo Personalizado</q-tooltip>
-        </q-btn>
-      </div>
-    </div>
+    </q-card>
 
     <!-- Modal -->
     <Modal Title="Novo Campo Personalizado" Icon="fas fa-pencil" Persistent v-model="showModal" :Actions="modalActions"
       @hide="resetInput">
+      <q-card flat bordered class="q-pa-sm q-ma-sm text-amber-8 text-justify bg-yellow-1 border-amber-7">
+        <div>
+          <q-icon name="fas fa-triangle-exclamation" style="padding-bottom: 3px;"></q-icon>
+          Ao adicionar um campo customizado, ele será adicionado a TODOS os cadastros de Associado, incluindo também o cadastro de associação encontrado no app. <span class="text-bold">OBS:</span> Campos obrigatórios exigirão ser preenchidos ao tentar atualizar um Associado já cadastrado.
+        </div>
+      </q-card>
       <div class="row">
         <div class="col-12">
-          <InputField Label="Nome" Icon="fas fa-pen-clip" type="text" dense v-model="input.ds_fieldlabel"
+          <InputField Label="Nome" Icon="fas fa-pen-clip" type="text" v-model="input.ds_fieldlabel"
             :Error="inputError.ds_fieldlabel" @focus="inputError.ds_fieldlabel = false">
           </InputField>
         </div>
-        <div class="col-12">
-          <InputField Label="Tipo" Icon="fas fa-puzzle-piece" type="select" dense v-model="input.do_fieldtype"
+        <div class="col-12 row">
+          <InputField class="col-7" Label="Tipo" Icon="fas fa-puzzle-piece" type="select" v-model="input.do_fieldtype"
             :Options="types" :Error="inputError.ds_fieldlabel" @focus="inputError.ds_fieldlabel = false">
           </InputField>
-        </div>
-        <div class="col-12 text-right">
-          <q-toggle size="lg" trueValue="Y" falseValue="N" color="green" icon="fas fa-check"
+          <q-toggle class="col" size="lg" trueValue="Y" falseValue="N" color="green" icon="fas fa-check"
             v-model="input.do_is_required"
-            :label="input.do_is_required == 'Y' ? 'Campo Obrigatório' : 'Campo Opcional'"></q-toggle>
+            :label="input.do_is_required == 'Y' ? 'Campo Obrigatório' : 'Campo Opcional'">
+          </q-toggle>
         </div>
-
 
         <!-- <div class="col-12 col-md-12 q-pl-xs">
           <InputField Label="Regras de preenchimento do campo" Icon="fas fa-square-pen" type="textarea" dense v-model="input.tx_rules">
@@ -70,6 +78,8 @@ export default {
     dense: Boolean,
     readonly: Boolean,
     formMode: Boolean,
+    showTitle: Boolean,
+    showBorder: Boolean,
     entityName: {
       type: String,
       required: true,
