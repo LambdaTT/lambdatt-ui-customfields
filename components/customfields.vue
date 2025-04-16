@@ -1,35 +1,35 @@
 <template>
   <div>
-    <q-card flat :bordered="showBorder" :class="showBorder? 'q-pa-sm q-ma-sm':''" style="border-radius: 10px;">
+    <q-card flat :bordered="showBorder" :class="showBorder ? 'q-pa-sm q-ma-sm' : ''" style="border-radius: 10px;">
       <div v-if="showTitle" class="text-bold q-pa-sm">Campos Personalizados</div>
-        <div class="row">
-          <!-- Fields -->
-          <div v-for="(field, index) in customFields" :key="index" class="col-12 col-md-6">
-            <div class="row">
-              <div class="col">
-                <InputField :dense="dense" Icon="fas fa-pen" :readonly="readonly" clearable
-                  v-model="this.customFieldsValues[field.name]" :type="typeDictionary[field.type]"
-                  :Label="`${field.label}${field.required === 'Y'? '*':''}`"  
-                  :Error="field.required ? valuesError[field.name] : false"
-                  @focus="() => { if (valuesError[field.name]) valuesError[field.name] = false }">
-                </InputField>
-              </div>
-              <div v-if="!(readonly || formMode)" class="col-auto flex justify-center items-center">
-                <q-btn class="q-mx-sm" icon="fas fa-minus" color="negative" label="" dense round outline
-                  @click="remove(field)">
-                  <q-tooltip>Remover Campo</q-tooltip>
-                </q-btn>
-              </div>
+      <div class="row">
+        <!-- Fields -->
+        <div v-for="(field, index) in customFields" :key="index" class="col-12 col-md-6">
+          <div class="row">
+            <div class="col">
+              <InputField :dense="dense" Icon="fas fa-pen" :readonly="readonly" clearable
+                v-model="this.customFieldsValues[field.name]" :type="typeDictionary[field.type]"
+                :Label="`${field.label}${field.required === 'Y' ? '*' : ''}`"
+                :Error="field.required ? valuesError[field.name] : false"
+                @focus="() => { if (valuesError[field.name]) valuesError[field.name] = false }">
+              </InputField>
+            </div>
+            <div v-if="!(readonly || formMode)" class="col-auto flex justify-center items-center">
+              <q-btn class="q-mx-sm" icon="fas fa-minus" color="negative" label="" dense round outline
+                @click="remove(field)">
+                <q-tooltip>Remover Campo</q-tooltip>
+              </q-btn>
             </div>
           </div>
-          <div class="col-6 flex justify-start items-center">
-            <!-- Button -->
-            <q-btn v-if="!(readonly || formMode)" class="q-ma-sm" icon="fas fa-plus" color="primary" label="Adicionar Campo"
-              :dense="dense" outline @click="showModal = true">
-              <q-tooltip>Adiciona um Campo Personalizado</q-tooltip>
-            </q-btn>
-          </div>
         </div>
+        <div class="col-6 flex justify-start items-center">
+          <!-- Button -->
+          <q-btn v-if="!(readonly || formMode)" class="q-ma-sm" icon="fas fa-plus" color="primary"
+            label="Adicionar Campo" :dense="dense" outline @click="showModal = true">
+            <q-tooltip>Adiciona um Campo Personalizado</q-tooltip>
+          </q-btn>
+        </div>
+      </div>
     </q-card>
 
     <!-- Modal -->
@@ -38,7 +38,9 @@
       <q-card flat bordered class="q-pa-sm q-ma-sm text-amber-8 text-justify bg-yellow-1 border-amber-7">
         <div>
           <q-icon name="fas fa-triangle-exclamation" style="padding-bottom: 3px;"></q-icon>
-          Ao adicionar um campo customizado, ele será adicionado a TODOS os cadastros de Associado, incluindo também o cadastro de associação encontrado no app. <span class="text-bold">OBS:</span> Campos obrigatórios exigirão ser preenchidos ao tentar atualizar um Associado já cadastrado.
+          Ao adicionar um campo customizado, ele será adicionado a TODOS os cadastros de Associado, incluindo também o
+          cadastro de associação encontrado no app. <span class="text-bold">OBS:</span> Campos obrigatórios exigirão ser
+          preenchidos ao tentar atualizar um Associado já cadastrado.
         </div>
       </q-card>
       <div class="row">
@@ -234,7 +236,7 @@ export default {
     // Load the list of all custom fields related to the entity
     async getCustomFields() {
       // Emitting the loading event
-      this.$emit('load', 'fields-read');
+      this.$eventbroadcaster.$broadcast('load', 'fields-read');
       try {
         const response = await this.$http.get(`${ENDPOINTS.SETTINGS_CUSTOMFIELD}/${this.entityName}`);
         this.customFields = [];
@@ -264,7 +266,7 @@ export default {
         console.error("An error occurred while attempting to retrieve the custom fields' data.", error);
       } finally {
         // Finalizing the loading event
-        this.$emit('loaded', 'fields-read');
+        this.$eventbroadcaster.$broadcast('loaded', 'fields-read');
       }
     }
   },
@@ -290,8 +292,8 @@ export default {
   },
 
   async created() {
-    await this.getCustomFields();
     this.$emit("update:model-value", this.factory);
+    await this.getCustomFields();
   }
 }
 </script>
