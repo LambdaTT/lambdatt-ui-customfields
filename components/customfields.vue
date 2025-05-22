@@ -1,8 +1,11 @@
 <template>
   <div>
-    <q-card flat :bordered="showBorder" :class="showBorder ? 'q-pa-sm q-ma-sm' : ''" style="border-radius: 10px;">
-      <div v-if="showTitle" class="text-bold q-pa-sm">Campos Personalizados</div>
-      <div class="row">
+    <q-card :flat="!card" :bordered="showBorder" :class="showBorder ? 'q-pa-sm q-ma-sm' : ''">
+      <div v-if="showTitle">
+        <div v-if="!card" class="text-bold q-pa-sm" style="font-size: 20px;">Campos Personalizados</div>
+        <div v-else class="bg-grey-9 q-pa-md text-bold text-white q-pl-lg card-title">Campos Personalizados</div>
+      </div>
+      <div class="row" :class="!card? '': 'q-pa-md'">
         <!-- Fields -->
         <div v-for="(field, index) in customFields" :key="index" class="col-12 col-md-6">
           <div class="row">
@@ -77,6 +80,7 @@ export default {
   name: 'components-common-customfields',
 
   props: {
+    card: Boolean,
     dense: Boolean,
     readonly: Boolean,
     formMode: Boolean,
@@ -297,3 +301,10 @@ export default {
   }
 }
 </script>
+<style scoped>
+.card-title {
+  font-size: 16px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+</style>
