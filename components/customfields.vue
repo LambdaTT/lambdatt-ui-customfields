@@ -2,10 +2,10 @@
   <div>
     <q-card :flat="!card" :bordered="showBorder" :class="showBorder ? 'q-pa-sm q-ma-sm' : ''">
       <div v-if="showTitle">
-        <div v-if="!card" class="text-bold q-pa-sm" style="font-size: 20px;">Campos Personalizados</div>
-        <div v-else class="bg-grey-9 q-pa-md text-bold text-white q-pl-lg card-title">Campos Personalizados</div>
+        <div v-if="card" class="bg-grey-9 q-pa-md text-bold text-white q-pl-lg card-title">Campos Personalizados</div>
+        <div v-else class="q-pa-sm" style="font-size: 20px;">Campos Personalizados</div>
       </div>
-      <div class="row" :class="!card? '': 'q-pa-md'">
+      <div class="row" :class="card? 'q-pa-md': ''">
         <!-- Fields -->
         <div v-for="(field, index) in customFields" :key="index" class="col-12 col-md-6">
           <div class="row">
