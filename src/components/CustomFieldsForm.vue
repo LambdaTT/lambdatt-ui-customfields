@@ -237,7 +237,7 @@ export default {
     // Load the list of all custom fields related to the entity
     async getCustomFields() {
       // Emitting the loading event
-      this.$eventbroadcaster.$broadcast('load', 'fields-read');
+      this.$toolcase.services.eventbroadcaster.$broadcast('load', 'fields-read');
       try {
         const response = await this.$toolcase.services.http.get(`${this.$customfields.ENDPOINTS.SETTINGS_CUSTOMFIELD}/${this.entityName}`);
         this.customFields = [];
@@ -267,7 +267,7 @@ export default {
         console.error("An error occurred while attempting to retrieve the custom fields' data.", error);
       } finally {
         // Finalizing the loading event
-        this.$eventbroadcaster.$broadcast('loaded', 'fields-read');
+        this.$toolcase.services.eventbroadcaster.$broadcast('loaded', 'fields-read');
       }
     }
   },
