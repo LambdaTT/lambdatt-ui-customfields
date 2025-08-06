@@ -5,7 +5,7 @@
         <div v-if="card" class="bg-grey-9 q-pa-md text-bold text-white q-pl-lg card-title">Campos Personalizados</div>
         <div v-else class="q-pa-sm" style="font-size: 20px;">Campos Personalizados</div>
       </div>
-      <div class="row" :class="card? 'q-pa-md': ''">
+      <div class="row" :class="card ? 'q-pa-md' : ''">
         <!-- Fields -->
         <div v-for="(field, index) in customFields" :key="index" class="col-12 col-md-6">
           <div class="row">
@@ -36,8 +36,8 @@
     </q-card>
 
     <!-- Modal -->
-    <Modal Title="Novo Campo Personalizado" Icon="fas fa-pencil" Persistent v-model="showModal" :Actions="modalActions"
-      @hide="resetInput">
+    <La1Modal Title="Novo Campo Personalizado" Icon="fas fa-pencil" Persistent v-model="showModal"
+      :Actions="modalActions" @hide="resetInput">
       <q-card flat bordered class="q-pa-sm q-ma-sm text-amber-8 text-justify bg-yellow-1 border-amber-7">
         <div>
           <q-icon name="fas fa-triangle-exclamation" style="padding-bottom: 3px;"></q-icon>
@@ -67,14 +67,11 @@
           </InputField>
         </div> -->
       </div>
-    </Modal>
+    </La1Modal>
   </div>
 </template>
 
 <script>
-// Services:
-import { ENDPOINTS } from 'src/services/endpoints'
-
 // Components:
 export default {
   name: 'components-common-customfields',
@@ -148,7 +145,7 @@ export default {
 
   methods: {
     validateValues() {
-      return this.$utils.validateForm(this.customFieldsValues, this.valuesError);
+      return this.$toolcase.services.utils.validateForm(this.customFieldsValues, this.valuesError);
     },
 
     readValues(source) {
@@ -183,8 +180,8 @@ export default {
 
       // Api Request
       try {
-        await this.$http.delete(`${ENDPOINTS.SETTINGS_CUSTOMFIELD}/${this.entityName}/${field.name}`);
-        this.$utils.notify({
+        await this.$toolcase.services.http.delete(`${this.$customfields.ENDPOINTS.SETTINGS_CUSTOMFIELD}/${this.entityName}/${field.name}`);
+        this.$toolcase.services.utils.notify({
           message: 'O campo foi excluído com sucesso',
           type: 'positive',
           position: 'top-right'
@@ -194,7 +191,7 @@ export default {
         delete this.customFieldsValues[field.name];
         delete this.valuesError[field.name];
       } catch (error) {
-        this.$utils.notifyError(error);
+        this.$toolcase.services.utils.notifyError(error);
         console.error("An error occurred while attempting to delete the object.", error);
       } finally {
         // Finalizing the loading event
@@ -205,7 +202,7 @@ export default {
     // Create the RECORD of the field
     async save() {
       // Validation
-      if (!this.$utils.validateForm(this.input, this.inputError)) return;
+      if (!this.$toolcase.services.utils.validateForm(this.input, this.inputError)) return;
 
       // Emitting the loading event
       this.$emit('load', 'field-save');
@@ -218,8 +215,8 @@ export default {
 
       // Api Request
       try {
-        await this.$http.post(ENDPOINTS.SETTINGS_CUSTOMFIELD, data)
-        this.$utils.notify({
+        await this.$toolcase.services.http.post(this.$customfields.ENDPOINTS.SETTINGS_CUSTOMFIELD, data)
+        this.$toolcase.services.utils.notify({
           message: 'O campo foi criado com sucesso',
           type: 'positive',
           position: 'top-right'
@@ -229,7 +226,7 @@ export default {
         // Close the Modal
         this.showModal = false;
       } catch (error) {
-        this.$utils.notifyError(error);
+        this.$toolcase.services.utils.notifyError(error);
         console.error('An error occurred while attempting to create/update the object.', error);
       } finally {
         // Finalizing the loading event
@@ -242,7 +239,7 @@ export default {
       // Emitting the loading event
       this.$eventbroadcaster.$broadcast('load', 'fields-read');
       try {
-        const response = await this.$http.get(`${ENDPOINTS.SETTINGS_CUSTOMFIELD}/${this.entityName}`);
+        const response = await this.$toolcase.services.http.get(`${this.$customfields.ENDPOINTS.SETTINGS_CUSTOMFIELD}/${this.entityName}`);
         this.customFields = [];
         if (response && response.data) {
           for (let i = 0; i < response.data.length; i++) {
