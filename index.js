@@ -49,6 +49,8 @@ function mapPages() {
     const pageUrl = `${NAME}/${[...parts.slice(3), pageName.toLowerCase()].join('/')}`;
     const pageRoute = configs.route ?? `${pageUrl}${params.length > 0 ? `/:${params.join('/:')}` : ''}`
 
+
+
     pagesMap[pageUrl] = {
       path: pageRoute,
       component: mod.default,
