@@ -1,6 +1,9 @@
 // src/index.js
 
+// Enpoints:
 import ENDPOINTS from './src/ENDPOINTS.js'
+
+export const NAME = 'customfields'
 
 function mapServices() {
   const services = import.meta.globEager('./src/services/**/*.js');
@@ -9,9 +12,12 @@ function mapServices() {
   for (const path in services) {
     const mod = services[path];
     // Extract the service name from the file path
-    const serviceName = path.split('/').pop().replace(/\.\w+$/, '');
-    servicesMap[serviceName] = mod.default;
+    const parts = path.split('/');
+    const serviceName = parts.pop().replace(/\.\w+$/, '');
+    const serviceUri = [...parts.slice(3), serviceName].join('.');
+    servicesMap[serviceUri] = mod.default;
   }
+
   return servicesMap;
 }
 
@@ -34,9 +40,20 @@ function mapPages() {
   const pagesMap = {};
   for (const path in pages) {
     const mod = pages[path];
+    const configs = mod.__PAGE_CONFIG ?? {};
+    const extras = configs.extras ?? {};
+    const params = configs.params ?? [];
     // Extract the page name from the file path
-    const pageName = path.split('/').pop().replace(/\.\w+$/, '');
-    pagesMap[pageName] = mod.default;
+    const parts = path.split('/');
+    const pageName = parts.pop().replace(/\.\w+$/, '');
+    const pageUrl = `${NAME}/${[...parts.slice(3), pageName.toLowerCase()].join('/')}`;
+    const pageRoute = configs.route ?? `${pageUrl}${params.length > 0 ? `/:${params.join('/:')}` : ''}`
+
+    pagesMap[pageUrl] = {
+      path: pageRoute,
+      component: mod.default,
+      extras
+    };
   }
   return pagesMap;
 }
@@ -54,34 +71,10 @@ function mapLayouts() {
   return layoutsMap;
 }
 
-function registerComponents(app) {
-  const components = mapComponents();
-
-  for (const componentName in components) {
-    app.component(componentName, components[componentName]);
-  }
-}
-
-export const CUSTOMFIELDS = {
+export default {
   ENDPOINTS,
   SERVICES: mapServices(),
   COMPONENTS: mapComponents(),
   PAGES: mapPages(),
   LAYOUTS: mapLayouts(),
-  autoWire(app) {
-    // 1) sync register all components
-    registerComponents(app)
-
-    // 2) bootstrap `$customfields` scope
-    app.config.globalProperties.$customfields = {
-      ENDPOINTS: ENDPOINTS,
-      services: mapServices(),
-      pages: mapPages(),
-      layouts: mapLayouts(),
-    }
-  }
-}
-
-export function autoWire(app) {
-  CUSTOMFIELDS.autoWire(app);
 }

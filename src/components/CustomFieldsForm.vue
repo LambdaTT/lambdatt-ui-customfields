@@ -145,7 +145,7 @@ export default {
 
   methods: {
     validateValues() {
-      return this.$toolcase.services.utils.validateForm(this.customFieldsValues, this.valuesError);
+      return this.$getService('toolcase/utils').validateForm(this.customFieldsValues, this.valuesError);
     },
 
     readValues(source) {
@@ -180,8 +180,8 @@ export default {
 
       // Api Request
       try {
-        await this.$toolcase.services.http.delete(`${this.$customfields.ENDPOINTS.SETTINGS_CUSTOMFIELD}/${this.entityName}/${field.name}`);
-        this.$toolcase.services.utils.notify({
+        await this.$getService('toolcase/http').delete(`${this.getModule('customfields').ENDPOINTS.SETTINGS_CUSTOMFIELD}/${this.entityName}/${field.name}`);
+        this.$getService('toolcase/utils').notify({
           message: 'O campo foi excluído com sucesso',
           type: 'positive',
           position: 'top-right'
@@ -191,7 +191,7 @@ export default {
         delete this.customFieldsValues[field.name];
         delete this.valuesError[field.name];
       } catch (error) {
-        this.$toolcase.services.utils.notifyError(error);
+        this.$getService('toolcase/utils').notifyError(error);
         console.error("An error occurred while attempting to delete the object.", error);
       } finally {
         // Finalizing the loading event
@@ -202,7 +202,7 @@ export default {
     // Create the RECORD of the field
     async save() {
       // Validation
-      if (!this.$toolcase.services.utils.validateForm(this.input, this.inputError)) return;
+      if (!this.$getService('toolcase/utils').validateForm(this.input, this.inputError)) return;
 
       // Emitting the loading event
       this.$emit('load', 'field-save');
@@ -215,8 +215,8 @@ export default {
 
       // Api Request
       try {
-        await this.$toolcase.services.http.post(this.$customfields.ENDPOINTS.SETTINGS_CUSTOMFIELD, data)
-        this.$toolcase.services.utils.notify({
+        await this.$getService('toolcase/http').post(this.getModule('customfields').ENDPOINTS.SETTINGS_CUSTOMFIELD, data)
+        this.$getService('toolcase/utils').notify({
           message: 'O campo foi criado com sucesso',
           type: 'positive',
           position: 'top-right'
@@ -226,7 +226,7 @@ export default {
         // Close the Modal
         this.showModal = false;
       } catch (error) {
-        this.$toolcase.services.utils.notifyError(error);
+        this.$getService('toolcase/utils').notifyError(error);
         console.error('An error occurred while attempting to create/update the object.', error);
       } finally {
         // Finalizing the loading event
@@ -237,9 +237,9 @@ export default {
     // Load the list of all custom fields related to the entity
     async getCustomFields() {
       // Emitting the loading event
-      this.$toolcase.services.eventbroadcaster.$broadcast('load', 'fields-read');
+      this.$getService('toolcase/eventbroadcaster').$broadcast('load', 'fields-read');
       try {
-        const response = await this.$toolcase.services.http.get(`${this.$customfields.ENDPOINTS.SETTINGS_CUSTOMFIELD}/${this.entityName}`);
+        const response = await this.$getService('toolcase/http').get(`${this.getModule('customfields').ENDPOINTS.SETTINGS_CUSTOMFIELD}/${this.entityName}`);
         this.customFields = [];
         if (response && response.data) {
           for (let i = 0; i < response.data.length; i++) {
@@ -267,7 +267,7 @@ export default {
         console.error("An error occurred while attempting to retrieve the custom fields' data.", error);
       } finally {
         // Finalizing the loading event
-        this.$toolcase.services.eventbroadcaster.$broadcast('loaded', 'fields-read');
+        this.$getService('toolcase/eventbroadcaster').$broadcast('loaded', 'fields-read');
       }
     }
   },
