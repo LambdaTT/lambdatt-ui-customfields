@@ -3,8 +3,12 @@
     <q-card :flat="!card" :bordered="showBorder" :class="showBorder ? 'q-pa-sm q-ma-sm' : ''">
       <div v-if="showTitle">
         <div v-if="card" class="bg-grey-9 q-pa-md text-bold text-white q-pl-lg card-title">Campos Personalizados</div>
-        <div v-else class="q-pa-sm" style="font-size: 20px;">Campos Personalizados</div>
+        <div v-else class="q-px-sm q-pt-sm" style="font-size: 20px;">
+          <!-- <q-icon name="fas fa-edit" size="1em" class="q-mr-xs" style="padding-bottom: 2px;"></q-icon> -->
+          Campos Personalizados
+        </div>
       </div>
+      <div class="col-12 q-px-sm form-note">Campos marcados com <span class="required">*</span> são obrigatórios.</div>
       <div class="row" :class="card? 'q-pa-md': ''">
         <!-- Fields -->
         <div v-for="(field, index) in customFields" :key="index" class="col-12 col-md-6">
