@@ -182,7 +182,7 @@ export default {
 
       // Api Request
       try {
-        await this.$getService('toolcase/http').delete(`${ENDPOINTS.FIELD}/${this.entityName}/${field.name}`);
+        await this.$getService('toolcase/http').delete(`${ENDPOINTS.ENTITY}/${this.entityName}/${field.name}`);
         this.$getService('toolcase/utils').notify({
           message: 'O campo foi excluído com sucesso',
           type: 'positive',
@@ -217,7 +217,7 @@ export default {
 
       // Api Request
       try {
-        await this.$getService('toolcase/http').post(ENDPOINTS.FIELD, data)
+        await this.$getService('toolcase/http').post(ENDPOINTS.ENTITY, data)
         this.$getService('toolcase/utils').notify({
           message: 'O campo foi criado com sucesso',
           type: 'positive',
@@ -241,7 +241,7 @@ export default {
       // Emitting the loading event
       this.$getService('toolcase/eventbroadcaster').$broadcast('load', 'fields-read');
       try {
-        const response = await this.$getService('toolcase/http').get(`${ENDPOINTS.ENTITY_FIELDS}/${this.entityName}`);
+        const response = await this.$getService('toolcase/http').get(`${ENDPOINTS.ENTITY}/${this.entityName}`);
         this.customFields = [];
         if (response && response.data) {
           for (let i = 0; i < response.data.length; i++) {
@@ -294,7 +294,7 @@ export default {
     },
   },
 
-  async created() {
+  async mounted() {
     this.$emit("update:model-value", this.factory);
     await this.getCustomFields();
   }
