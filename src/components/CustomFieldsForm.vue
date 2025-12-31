@@ -178,7 +178,7 @@ export default {
       if (!confirm('Deseja excluir as informações? (Isso afetará todos os registros)')) return false;
 
       // Emitting the loading event
-      this.$emit('load', 'field-remove');
+      this.$getService('toolcase/loader').load( 'field-remove');
 
       // Api Request
       try {
@@ -197,7 +197,7 @@ export default {
         console.error("An error occurred while attempting to delete the object.", error);
       } finally {
         // Finalizing the loading event
-        this.$emit('loaded', 'field-remove');
+        this.$getService('toolcase/loader').loaded( 'field-remove');
       };
     },
 
@@ -207,7 +207,7 @@ export default {
       if (!this.$getService('toolcase/utils').validateForm(this.input, this.inputError)) return;
 
       // Emitting the loading event
-      this.$emit('load', 'field-save');
+      this.$getService('toolcase/loader').load( 'field-save');
 
       // Setting data for upload
       let data = new FormData();
@@ -232,14 +232,14 @@ export default {
         console.error('An error occurred while attempting to create/update the object.', error);
       } finally {
         // Finalizing the loading event
-        this.$emit('loaded', 'field-save');
+        this.$getService('toolcase/loader').loaded( 'field-save');
       }
     },
 
     // Load the list of all custom fields related to the entity
     async getCustomFields() {
       // Emitting the loading event
-      this.$getService('toolcase/eventbroadcaster').$broadcast('load', 'fields-read');
+      this.$getService('toolcase/loader').load( 'fields-read');
       try {
         const response = await this.$getService('toolcase/http').get(`${ENDPOINTS.ENTITY}/${this.entityName}`);
         this.customFields = [];
@@ -269,7 +269,7 @@ export default {
         console.error("An error occurred while attempting to retrieve the custom fields' data.", error);
       } finally {
         // Finalizing the loading event
-        this.$getService('toolcase/eventbroadcaster').$broadcast('loaded', 'fields-read');
+        this.$getService('toolcase/loader').loaded( 'fields-read');
       }
     }
   },
